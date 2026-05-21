@@ -1,0 +1,11 @@
+#  Ubuntu deploy bed, split out of the main overthink repo (2026-05).
+#  Disposable VM test bed for the ubuntu-debootstrap bootstrap VM — carries
+#  `disposable: true`, so `ov -C image/ubuntu update ubuntu-debootstrap-vm`
+#  rebuilds it unattended.
+version: 2026.141.1600
+deploy:
+    ubuntu-debootstrap-vm:
+        target: vm
+        vm: ubuntu-debootstrap
+        disposable: true
+        lifecycle: dev

@@ -1,0 +1,40 @@
+#  overthinkos/ubuntu — the Ubuntu image family, split out of the main
+#  overthink repo (2026-05). Mounted as a git submodule at image/ubuntu.
+#
+#  This repo VENDORS NOTHING. It composes the canonical ov layers and the
+#  shared build-config (distro/builder/init) entirely by GITHUB REFERENCE into
+#  github.com/overthinkos/overthink — every layer in image.yml is an
+#  `@github.com/...` ref, and build.yml is a remote include. There is no
+#  duplicated config.
+#
+#  Ubuntu is deb-family: `distro.ubuntu` is `inherits: debian` in the shared
+#  build.yml (which carries BOTH the debian and ubuntu distro configs), so the
+#  inheritance resolves through the single remote build.yml include. The
+#  `ubuntu` base roots at the upstream docker.io `ubuntu:24.04` image; the
+#  debootstrap builder is `base: debian:13` (debootstrap is a Debian tool).
+#  Nothing in the main repo consumes any Ubuntu image, so there is NO
+#  main ↔ ubuntu coupling — the only edge is ubuntu → main (layers + build.yml).
+#
+#  Directly buildable: `ov image build ubuntu` (the build verb defaults to this
+#  overthink.yml). From the parent repo: `ov -C image/ubuntu image build
+#  ubuntu`, or anywhere: `ov --repo overthinkos/ubuntu image build ubuntu`.
+version: 2026.141.1600
+defaults:
+    platform:
+        - linux/amd64
+    tag: auto
+    registry: ghcr.io/overthinkos
+    build:
+        - deb
+    merge:
+        auto: false
+        max_mb: 128
+include:
+    # Local per-kind entries (Ubuntu images, VM, deploy bed).
+    - image.yml
+    - vm.yml
+    - deploy.yml
+    # Shared build-config — pulled from the main repo by github reference
+    # (single source of truth, pinned to one tag). Carries distro.ubuntu
+    # (inherits: debian) + distro.debian + the deb format + debootstrap builder.
+    - '@github.com/overthinkos/overthink/build.yml:v2026.141.1600'

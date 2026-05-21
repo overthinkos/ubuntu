@@ -1,0 +1,120 @@
+#  Ubuntu images, split out of the main overthink repo (2026-05). The `ubuntu`
+#  base roots at the upstream docker.io `ubuntu:24.04` image directly; the
+#  `ubuntu-debootstrap`/`-builder` pair is the bootstrap-from-scratch family
+#  (the builder is `base: debian:13` because debootstrap is a Debian tool that
+#  bootstraps Ubuntu suites too; `from: builder:debootstrap` resolves from the
+#  remote-included build.yml). Every layer is pulled by GITHUB REFERENCE from
+#  the main repo (the layers never moved) — nothing is vendored. All `@`-refs
+#  pin to the SAME tag.
+version: 2026.141.1600
+image:
+    ubuntu-debootstrap-builder:
+        base: debian:13
+        distro:
+            - debian:13
+            - debian
+        build:
+            - deb
+        layer:
+            - '@github.com/overthinkos/overthink/layers/debootstrap-builder:v2026.141.1600'
+    ubuntu-debootstrap:
+        from: builder:debootstrap
+        bootstrap_builder_image: ubuntu-debootstrap-builder
+        distro:
+            - ubuntu:24.04
+            - ubuntu
+            - debian
+        build:
+            - deb
+    ubuntu:
+        base: ubuntu:24.04
+        distro:
+            - ubuntu:24.04
+            - ubuntu
+            - debian
+        build:
+            - deb
+        builder:
+            cargo: ubuntu-builder
+            npm: ubuntu-builder
+            pixi: ubuntu-builder
+        produce:
+            - pixi
+            - npm
+            - cargo
+    ubuntu-builder:
+        base: ubuntu
+        layer:
+            - '@github.com/overthinkos/overthink/layers/pixi:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/nodejs:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/build-toolchain:v2026.141.1600'
+        produce:
+            - pixi
+            - npm
+            - cargo
+    ubuntu-coder:
+        base: ubuntu
+        layer:
+            - '@github.com/overthinkos/overthink/layers/agent-forwarding:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/sshd:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/ov-full:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/ov-mcp:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/container-nesting:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/dbus:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/tmux:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/language-runtimes:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/golang:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/nodejs:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/rust:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/pixi:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/uv:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/build-toolchain:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/dev-tools:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/pre-commit:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/direnv:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/gh:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/typst:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/asciinema:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/claude-code:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/codex:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/gemini:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/forgecode:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/oracle:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/devops-tools:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/kubernetes:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/docker-ce:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/github-actions:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/google-cloud:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/google-cloud-npm:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/grafana-tools:v2026.141.1600'
+        port:
+            - 2222:2222
+            - 18765:18765
+        eval:
+            - command: test -x ${HOME}/.npm-global/bin/claude && test -x ${HOME}/.npm-global/bin/codex && test -x ${HOME}/.npm-global/bin/gemini && test -x ${HOME}/.npm-global/bin/forge
+              id: ubuntu-coder-ai-clis
+              exit_status: 0
+            - command: test -x /usr/bin/go && test -x /usr/bin/node && { test -x ${HOME}/.cargo/bin/cargo || test -x /usr/bin/cargo; }
+              id: ubuntu-coder-languages
+              exit_status: 0
+            - command: test -x /usr/bin/kubectl && test -x /usr/bin/docker && test -x /usr/local/bin/aws && test -x /usr/bin/gcloud && test -x /usr/local/bin/tofu
+              id: ubuntu-coder-devops
+              exit_status: 0
+            - command: test -x /usr/local/bin/ov
+              id: ubuntu-coder-ov
+              exit_status: 0
+            - addr: 127.0.0.1:${HOST_PORT:2222}
+              id: ubuntu-coder-sshd-port
+              timeout: 5s
+              scope: deploy
+              reachable: true
+            - command: ov version
+              id: ubuntu-coder-ov-version
+              scope: deploy
+              in_container: true
+              exit_status: 0
+            - addr: 127.0.0.1:${HOST_PORT:18765}
+              id: ubuntu-coder-mcp-port
+              timeout: 5s
+              scope: deploy
+              reachable: true
