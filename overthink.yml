@@ -1,24 +1,30 @@
 #  overthinkos/ubuntu — the Ubuntu image family, split out of the main
 #  overthink repo (2026-05). Mounted as a git submodule at image/ubuntu.
 #
-#  This repo VENDORS NOTHING. It composes the canonical ov layers and the
-#  shared build-config (distro/builder/init) entirely by GITHUB REFERENCE into
-#  github.com/overthinkos/overthink — every layer in image.yml is an
-#  `@github.com/...` ref, and build.yml is a remote include. There is no
-#  duplicated config.
+#  SINGLE-FILE config (2026-05 import-namespace cutover): every local entity
+#  (the ubuntu base + debootstrap family, the ubuntu-coder/-builder images, the
+#  ubuntu bootstrap VM, and the disposable eval bed) is inlined here. This repo
+#  VENDORS NOTHING — every layer is an `@github.com/...` ref, and the shared
+#  build-config arrives via `import:`.
+#
+#  import: has two shapes —
+#    * flat string  → build.yml (shared distro/builder/init vocabulary), merged
+#      into this repo's root namespace.
+#    * `alias: ref` → a child repo mounted under a namespace.
+#  Ubuntu roots on EXTERNAL bases entirely (the `ubuntu` base is docker.io
+#  `ubuntu:24.04`, the debootstrap builder is `base: debian:13`), so it has NO
+#  cross-repo entity refs — only the flat build.yml vocabulary import is needed.
 #
 #  Ubuntu is deb-family: `distro.ubuntu` is `inherits: debian` in the shared
 #  build.yml (which carries BOTH the debian and ubuntu distro configs), so the
-#  inheritance resolves through the single remote build.yml include. The
-#  `ubuntu` base roots at the upstream docker.io `ubuntu:24.04` image; the
-#  debootstrap builder is `base: debian:13` (debootstrap is a Debian tool).
-#  Nothing in the main repo consumes any Ubuntu image, so there is NO
-#  main ↔ ubuntu coupling — the only edge is ubuntu → main (layers + build.yml).
+#  inheritance resolves through the single remote build.yml import. Nothing in
+#  the main repo consumes any Ubuntu image, so there is NO main ↔ ubuntu
+#  coupling — the only edge is ubuntu → main (layers + build.yml).
 #
 #  Directly buildable: `ov image build ubuntu` (the build verb defaults to this
 #  overthink.yml). From the parent repo: `ov -C image/ubuntu image build
 #  ubuntu`, or anywhere: `ov --repo overthinkos/ubuntu image build ubuntu`.
-version: 2026.141.1600
+version: 2026.143.844
 defaults:
     platform:
         - linux/amd64
@@ -29,12 +35,168 @@ defaults:
     merge:
         auto: false
         max_mb: 128
-include:
-    # Local per-kind entries (Ubuntu images, VM, deploy bed).
-    - image.yml
-    - vm.yml
-    - deploy.yml
-    # Shared build-config — pulled from the main repo by github reference
-    # (single source of truth, pinned to one tag). Carries distro.ubuntu
-    # (inherits: debian) + distro.debian + the deb format + debootstrap builder.
+import:
+    # Shared build-config vocabulary (distro/builder/init) — flat root import.
+    # Carries distro.ubuntu (inherits: debian) + distro.debian + the deb format
+    # + the debootstrap builder template. Ubuntu roots on external bases, so no
+    # namespaced (`ov`) import is needed.
     - '@github.com/overthinkos/overthink/build.yml:v2026.141.1600'
+image:
+    ubuntu-debootstrap-builder:
+        base: debian:13
+        distro:
+            - debian:13
+            - debian
+        build:
+            - deb
+        layer:
+            - '@github.com/overthinkos/overthink/layers/debootstrap-builder:v2026.141.1600'
+    ubuntu-debootstrap:
+        from: builder:debootstrap
+        bootstrap_builder_image: ubuntu-debootstrap-builder
+        distro:
+            - ubuntu:24.04
+            - ubuntu
+            - debian
+        build:
+            - deb
+    ubuntu:
+        base: ubuntu:24.04
+        distro:
+            - ubuntu:24.04
+            - ubuntu
+            - debian
+        build:
+            - deb
+        builder:
+            cargo: ubuntu-builder
+            npm: ubuntu-builder
+            pixi: ubuntu-builder
+        produce:
+            - pixi
+            - npm
+            - cargo
+    ubuntu-builder:
+        base: ubuntu
+        layer:
+            - '@github.com/overthinkos/overthink/layers/pixi:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/nodejs:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/build-toolchain:v2026.141.1600'
+        produce:
+            - pixi
+            - npm
+            - cargo
+    ubuntu-coder:
+        base: ubuntu
+        layer:
+            - '@github.com/overthinkos/overthink/layers/agent-forwarding:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/sshd:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/ov-full:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/ov-mcp:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/container-nesting:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/dbus:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/tmux:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/language-runtimes:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/golang:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/nodejs:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/rust:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/pixi:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/uv:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/build-toolchain:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/dev-tools:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/pre-commit:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/direnv:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/gh:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/typst:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/asciinema:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/claude-code:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/codex:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/gemini:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/forgecode:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/oracle:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/devops-tools:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/kubernetes:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/docker-ce:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/github-actions:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/google-cloud:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/google-cloud-npm:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/layers/grafana-tools:v2026.141.1600'
+        port:
+            - 2222:2222
+            - 18765:18765
+        eval:
+            - command: test -x ${HOME}/.npm-global/bin/claude && test -x ${HOME}/.npm-global/bin/codex && test -x ${HOME}/.npm-global/bin/gemini && test -x ${HOME}/.npm-global/bin/forge
+              id: ubuntu-coder-ai-clis
+              exit_status: 0
+            - command: test -x /usr/bin/go && test -x /usr/bin/node && { test -x ${HOME}/.cargo/bin/cargo || test -x /usr/bin/cargo; }
+              id: ubuntu-coder-languages
+              exit_status: 0
+            - command: test -x /usr/bin/kubectl && test -x /usr/bin/docker && test -x /usr/local/bin/aws && test -x /usr/bin/gcloud && test -x /usr/local/bin/tofu
+              id: ubuntu-coder-devops
+              exit_status: 0
+            - command: test -x /usr/local/bin/ov
+              id: ubuntu-coder-ov
+              exit_status: 0
+            - addr: 127.0.0.1:${HOST_PORT:2222}
+              id: ubuntu-coder-sshd-port
+              timeout: 5s
+              scope: deploy
+              reachable: true
+            - command: ov version
+              id: ubuntu-coder-ov-version
+              scope: deploy
+              in_container: true
+              exit_status: 0
+            - addr: 127.0.0.1:${HOST_PORT:18765}
+              id: ubuntu-coder-mcp-port
+              timeout: 5s
+              scope: deploy
+              reachable: true
+vm:
+    ubuntu-debootstrap:
+        # Bootstrap-from-scratch via debootstrap inside the ubuntu-debootstrap-
+        # builder container, then booted under libvirt/QEMU. The debootstrap
+        # builder template + distro.ubuntu config (which inherits debian) resolve
+        # from the imported build.yml.
+        source:
+            kind: bootstrap
+            builder: debootstrap
+            builder_image: ubuntu-debootstrap-builder
+            distro: ubuntu
+            package:
+                - sudo
+                - openssh-server
+                - qemu-guest-agent
+                - cloud-init
+            rootfs: ext4
+            kernel_args: console=tty0 console=ttyS0,115200
+        disk_size: 20G
+        ram: 4G
+        cpu: 2
+        machine: q35
+        firmware: uefi-insecure
+        network:
+            mode: user
+        ssh:
+            user: ubuntu
+            port: 12228
+            key_source: generate
+        cloud_init:
+            # The ubuntu account (sudo NOPASSWD + /bin/bash + ssh key +
+            # wheel/sudo) is provisioned from ssh.user via the cloud-init
+            # create-pattern (composeUsers), so no explicit users: block is
+            # needed here.
+            runcmd:
+                - systemctl enable --now ssh
+                - systemctl enable --now qemu-guest-agent
+                - "{ ip a; echo ===listen===; ss -tlnp; echo ===ssh===; systemctl status ssh --no-pager; } > /boot/ov-diag.txt 2>&1"
+eval:
+    # Disposable R10 test bed for the ubuntu bootstrap VM (kind:eval — the
+    # 2026-05 deploy→eval unification moved repo-shipped disposable beds out of
+    # deploy.yml). disposable: true is the sole authorization for the unattended
+    # destroy+rebuild driven by `ov eval run ubuntu-debootstrap-vm`.
+    ubuntu-debootstrap-vm:
+        target: vm
+        vm: ubuntu-debootstrap
+        disposable: true
+        lifecycle: dev
