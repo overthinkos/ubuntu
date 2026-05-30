@@ -10,7 +10,7 @@ of the main repo.
 |---|---|
 | `image:` | `ubuntu` (base), `ubuntu-builder`, `ubuntu-coder`, `ubuntu-debootstrap`, `ubuntu-debootstrap-builder` |
 | `vm:` | `ubuntu-debootstrap` (bootstrap-from-scratch via debootstrap) |
-| `deploy:` | `ubuntu-debootstrap-vm` (disposable bootstrap-VM bed) |
+| `eval:` | `eval-ubuntu-debootstrap-vm` (disposable bootstrap-VM bed) |
 
 ## Composition by reference — nothing is vendored
 
@@ -19,7 +19,7 @@ pulled from `github.com/overthinkos/overthink` by **github reference**:
 
 - every layer in `image.yml` is an `@github.com/overthinkos/overthink/layers/<name>:<tag>` ref;
 - the shared build-config (`build.yml` — distro/builder/init) is a remote
-  `include:` in `overthink.yml`. Ubuntu is deb-family: `distro.ubuntu` is
+  `import:` in `overthink.yml`. Ubuntu is deb-family: `distro.ubuntu` is
   `inherits: debian`, and the single remote `build.yml` carries BOTH the
   `ubuntu` and `debian` distro configs, so the inheritance resolves with no
   extra include. It also carries the `deb` format template and the
@@ -57,13 +57,13 @@ The first build resolves the upstream github references into
 `~/.cache/ov/repos/` and materializes the referenced layers under
 `.build/_layers/`.
 
-## debootstrap-from-scratch (`ubuntu-debootstrap` / `ubuntu-debootstrap-vm`)
+## debootstrap-from-scratch (`ubuntu-debootstrap` / `eval-ubuntu-debootstrap-vm`)
 
 `ubuntu-debootstrap` builds an Ubuntu rootfs from scratch via `debootstrap`
 inside the privileged `ubuntu-debootstrap-builder` container (`from:
-builder:debootstrap`). `ubuntu-debootstrap-vm` boots that rootfs under
+builder:debootstrap`). `eval-ubuntu-debootstrap-vm` boots that rootfs under
 libvirt/QEMU and carries `disposable: true`, so `ov -C image/ubuntu update
-ubuntu-debootstrap-vm` rebuilds it unattended.
+eval-ubuntu-debootstrap-vm` rebuilds it unattended.
 
 ## Requirements
 
