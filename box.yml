@@ -2,7 +2,7 @@
 #  overthink.yml's `includes:` list. The schema kind discriminator is
 #  `kind: image` for kind-keyed entries; root-shape map is `image:` (this file).
 #  2026-05 kind-files cutover.
-version: 2026.156.557
+version: 2026.156.1531
 box:
     ubuntu-debootstrap-builder:
         base: debian:13
@@ -61,7 +61,7 @@ box:
         candy:
             - '@github.com/overthinkos/overthink/candy/agent-forwarding:v2026.141.1600'
             - '@github.com/overthinkos/overthink/candy/sshd:v2026.141.1600'
-            - '@github.com/overthinkos/overthink/candy/ov-full:v2026.141.1600'
+            - '@github.com/overthinkos/overthink/candy/ov:v2026.156.2017'
             - '@github.com/overthinkos/overthink/candy/ov-mcp:v2026.141.1600'
             - '@github.com/overthinkos/overthink/candy/container-nesting:v2026.141.1600'
             - '@github.com/overthinkos/overthink/candy/dbus:v2026.141.1600'

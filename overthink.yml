@@ -24,7 +24,7 @@
 #  Directly buildable: `ov image build ubuntu` (the build verb defaults to this
 #  overthink.yml). From the parent repo: `ov -C image/ubuntu image build
 #  ubuntu`, or anywhere: `ov --repo overthinkos/ubuntu image build ubuntu`.
-version: 2026.156.557
+version: 2026.156.1531
 defaults:
     platform:
         - linux/amd64
