@@ -21,7 +21,7 @@
 #  the main repo consumes any Ubuntu image, so there is NO main ↔ ubuntu
 #  coupling — the only edge is ubuntu → main (layers + build.yml).
 #
-#  Directly buildable: `ov image build ubuntu` (the build verb defaults to this
+#  Directly buildable: `ov box build ubuntu` (the build verb defaults to this
 #  overthink.yml). From the parent repo: `ov -C image/ubuntu image build
 #  ubuntu`, or anywhere: `ov --repo overthinkos/ubuntu image build ubuntu`.
 version: 2026.157.311
@@ -58,7 +58,7 @@ eval:
         # deb localpkg AUTO-RESOLVE witness (ubuntu): ov installed as the
         # `overthink` .deb via localpkg (one deb source serves Debian + Ubuntu),
         # mandatory deps auto-resolved by apt from Ubuntu main. tailscale is NOT in
-        # the .deb — the ov layer supplies it via the tailscale apt repo (noble), so
+        # the .deb — the ov candy supplies it via the tailscale apt repo (noble), so
         # it must ALSO be present after deploy.
         add_candy:
             - '@github.com/overthinkos/overthink/candy/ov:v2026.157.0650'
