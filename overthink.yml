@@ -24,7 +24,7 @@
 #  Directly buildable: `ov image build ubuntu` (the build verb defaults to this
 #  overthink.yml). From the parent repo: `ov -C image/ubuntu image build
 #  ubuntu`, or anywhere: `ov --repo overthinkos/ubuntu image build ubuntu`.
-version: 2026.156.1531
+version: 2026.157.311
 defaults:
     platform:
         - linux/amd64
@@ -40,7 +40,7 @@ import:
     # Carries distro.ubuntu (inherits: debian) + distro.debian + the deb format
     # + the debootstrap builder template. Ubuntu roots on external bases, so no
     # namespaced (`ov`) import is needed.
-    - '@github.com/overthinkos/overthink/build.yml:v2026.150.1904'
+    - '@github.com/overthinkos/overthink/build.yml:v2026.157.0650'
     - box.yml
     - vm.yml
     - pod.yml
@@ -55,3 +55,29 @@ eval:
         vm: ubuntu-debootstrap
         disposable: true
         lifecycle: dev
+        # deb localpkg AUTO-RESOLVE witness (ubuntu): ov installed as the
+        # `overthink` .deb via localpkg (one deb source serves Debian + Ubuntu),
+        # mandatory deps auto-resolved by apt from Ubuntu main. tailscale is NOT in
+        # the .deb — the ov layer supplies it via the tailscale apt repo (noble), so
+        # it must ALSO be present after deploy.
+        add_candy:
+            - '@github.com/overthinkos/overthink/candy/ov:v2026.157.0650'
+        install_opts:
+            allow_repo_changes: true
+            allow_root_tasks: true
+            skip_incompatible: true # skip composed layers lacking a guest-format section; the localpkg .deb/.rpm Depends/Requires install the packages
+        eval:
+            - id: localpkg-deb-autoresolve
+              scope: deploy
+              description: ov installed as the overthink .deb via localpkg, mandatory deps auto-resolved by apt; tailscale supplied by the ov layer
+              command: |
+                dpkg -s overthink >/dev/null 2>&1 &&
+                dpkg -s podman >/dev/null 2>&1 &&
+                dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
+                dpkg -s tailscale >/dev/null 2>&1 &&
+                command -v ov >/dev/null 2>&1 &&
+                ov version &&
+                echo LOCALPKG-DEB-AUTORESOLVE-OK
+              stdout:
+                - contains: LOCALPKG-DEB-AUTORESOLVE-OK
+              exit_status: 0
