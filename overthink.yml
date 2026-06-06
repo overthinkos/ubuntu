@@ -40,7 +40,7 @@ import:
     # Carries distro.ubuntu (inherits: debian) + distro.debian + the deb format
     # + the debootstrap builder template. Ubuntu roots on external bases, so no
     # namespaced (`ov`) import is needed.
-    - '@github.com/overthinkos/overthink/build.yml:v2026.157.0650'
+    - '@github.com/overthinkos/overthink/build.yml:v2026.157.1259'
     - box.yml
     - vm.yml
     - pod.yml
@@ -61,7 +61,7 @@ eval:
         # the .deb — the ov candy supplies it via the tailscale apt repo (noble), so
         # it must ALSO be present after deploy.
         add_candy:
-            - '@github.com/overthinkos/overthink/candy/ov:v2026.157.0650'
+            - '@github.com/overthinkos/overthink/candy/ov:v2026.157.1259'
         install_opts:
             allow_repo_changes: true
             allow_root_tasks: true
@@ -80,4 +80,14 @@ eval:
                 echo LOCALPKG-DEB-AUTORESOLVE-OK
               stdout:
                 - contains: LOCALPKG-DEB-AUTORESOLVE-OK
+              exit_status: 0
+            # distro-cascade witness: the per-distro cascade must resolve the
+            # UBUNTU (noble) tailscale apt repo on this ubuntu guest — deterministically,
+            # NOT debian/trixie. The VM chain [ubuntu:24.04, ubuntu] (distroTagChain)
+            # matches candy/ov's `ubuntu` tag section. This is the original
+            # non-deterministic-collapse bug fixed and proven on a live VM.
+            - id: tailscale-repo-suite-ubuntu-noble
+              scope: deploy
+              description: distro-cascade resolves the ubuntu/noble tailscale apt repo (not debian/trixie) deterministically
+              command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
               exit_status: 0
