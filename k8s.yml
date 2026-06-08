@@ -1,6 +1,6 @@
-#  Per-kind file for k8s entries. Sibling of overthink.yml — included via
-#  overthink.yml's `includes:` list. The schema kind discriminator is
+#  Per-kind file for k8s entries. Sibling of charly.yml — imported via
+#  charly.yml's `import:` list. The schema kind discriminator is
 #  `kind: k8s` for kind-keyed entries; root-shape map is `k8s:` (this file).
 #  2026-05 kind-files cutover.
-version: 2026.157.311
+version: 2026.159.3
 k8s: {}

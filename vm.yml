@@ -1,8 +1,8 @@
-#  Per-kind file for vm entries. Sibling of overthink.yml — included via
-#  overthink.yml's `includes:` list. The schema kind discriminator is
+#  Per-kind file for vm entries. Sibling of charly.yml — imported via
+#  charly.yml's `import:` list. The schema kind discriminator is
 #  `kind: vm` for kind-keyed entries; root-shape map is `vm:` (this file).
 #  2026-05 kind-files cutover.
-version: 2026.157.311
+version: 2026.159.3
 vm:
     ubuntu-debootstrap:
         # Bootstrap-from-scratch via debootstrap inside the ubuntu-debootstrap-
@@ -43,4 +43,4 @@ vm:
             runcmd:
                 - systemctl enable --now ssh
                 - systemctl enable --now qemu-guest-agent
-                - "{ ip a; echo ===listen===; ss -tlnp; echo ===ssh===; systemctl status ssh --no-pager; } > /boot/ov-diag.txt 2>&1"
+                - "{ ip a; echo ===listen===; ss -tlnp; echo ===ssh===; systemctl status ssh --no-pager; } > /boot/charly-diag.txt 2>&1"

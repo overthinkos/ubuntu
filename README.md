@@ -1,6 +1,6 @@
 # overthinkos/ubuntu
 
-The **Ubuntu image family** for [Overthink](https://github.com/overthinkos/overthink),
+The **Ubuntu image family** for [OpenCharly](https://github.com/overthinkos/overthink),
 split into its own repository and mounted as a git submodule at `image/ubuntu`
 of the main repo.
 
@@ -19,7 +19,7 @@ pulled from `github.com/overthinkos/overthink` by **github reference**:
 
 - every layer in `box.yml` is an `@github.com/overthinkos/overthink/candy/<name>:<tag>` ref;
 - the shared build-config (`build.yml` — distro/builder/init) is a remote
-  `import:` in `overthink.yml`. Ubuntu is deb-family: `distro.ubuntu` is
+  `import:` in `charly.yml`. Ubuntu is deb-family: `distro.ubuntu` is
   `inherits: debian`, and the single remote `build.yml` carries BOTH the
   `ubuntu` and `debian` distro configs, so the inheritance resolves with no
   extra include. It also carries the `deb` format template and the
@@ -33,7 +33,7 @@ exactly one definition of every layer — no duplication.
 
 ## No coupling with main
 
-Nothing in the main `overthink` repo consumes any Ubuntu image (no
+Nothing in the main `opencharly` repo consumes any Ubuntu image (no
 `base: ubuntu` image stays in main), so there is **no main ↔ ubuntu coupling**:
 the only edge is `ubuntu → main` (this repo pulls layers + `build.yml`). Main
 pulls nothing back. The image DAG is acyclic
@@ -43,18 +43,18 @@ pulls nothing back. The image DAG is acyclic
 ## Build
 
 ```bash
-# Inside the submodule (the build verb defaults to overthink.yml):
-ov box build ubuntu
+# Inside the submodule (the build verb defaults to charly.yml):
+charly box build ubuntu
 
-# From the parent overthink repo:
-ov -C image/ubuntu image build ubuntu
+# From the parent opencharly repo:
+charly -C image/ubuntu image build ubuntu
 
 # Standalone, against the published repo:
-ov --repo overthinkos/ubuntu image build ubuntu
+charly --repo overthinkos/ubuntu image build ubuntu
 ```
 
 The first build resolves the upstream github references into
-`~/.cache/ov/repos/` and materializes the referenced layers under
+`~/.cache/charly/repos/` and materializes the referenced layers under
 `.build/_layers/`.
 
 ## debootstrap-from-scratch (`ubuntu-debootstrap` / `eval-ubuntu-debootstrap-vm`)
@@ -62,14 +62,14 @@ The first build resolves the upstream github references into
 `ubuntu-debootstrap` builds an Ubuntu rootfs from scratch via `debootstrap`
 inside the privileged `ubuntu-debootstrap-builder` container (`from:
 builder:debootstrap`). `eval-ubuntu-debootstrap-vm` boots that rootfs under
-libvirt/QEMU and carries `disposable: true`, so `ov -C image/ubuntu update
+libvirt/QEMU and carries `disposable: true`, so `charly -C image/ubuntu update
 eval-ubuntu-debootstrap-vm` rebuilds it unattended.
 
 ## Requirements
 
 A build of any image here fetches from the upstream repo, so it needs network
-access and an `ov` recent enough to understand the config's schema version
-(`ov` hard-fails with an "update ov" message if the config is newer than the
+access and a `charly` recent enough to understand the config's schema version
+(`charly` hard-fails with an "update charly" message if the config is newer than the
 binary supports).
 
 ---
