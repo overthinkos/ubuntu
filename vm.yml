@@ -2,7 +2,7 @@
 #  charly.yml's `import:` list. The schema kind discriminator is
 #  `kind: vm` for kind-keyed entries; root-shape map is `vm:` (this file).
 #  2026-05 kind-files cutover.
-version: 2026.159.3
+version: 2026.159.1912
 vm:
     ubuntu-debootstrap:
         # Bootstrap-from-scratch via debootstrap inside the ubuntu-debootstrap-

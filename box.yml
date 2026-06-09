@@ -2,7 +2,7 @@
 #  charly.yml's `import:` list. The schema kind discriminator is
 #  `kind: image` for kind-keyed entries; root-shape map is `image:` (this file).
 #  2026-05 kind-files cutover.
-version: 2026.159.3
+version: 2026.159.1912
 box:
     ubuntu-debootstrap-builder:
         base: debian:13
@@ -12,7 +12,7 @@ box:
         build:
             - deb
         candy:
-            - '@github.com/overthinkos/overthink/candy/debootstrap-builder:v2026.159.1413'
+            - '@github.com/overthinkos/overthink/candy/debootstrap-builder:v2026.160.0856'
     ubuntu-debootstrap:
         # Layerless `from: builder:debootstrap` image (a bootstrap base) — needs a
         # dedicated version: the runtime requires one for a layerless image on an
@@ -47,9 +47,9 @@ box:
     ubuntu-builder:
         base: ubuntu
         candy:
-            - '@github.com/overthinkos/overthink/candy/pixi:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/nodejs:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/build-toolchain:v2026.159.1413'
+            - '@github.com/overthinkos/overthink/candy/pixi:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/nodejs:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/build-toolchain:v2026.160.0856'
         produce:
             - pixi
             - npm
@@ -57,38 +57,38 @@ box:
     ubuntu-coder:
         base: ubuntu
         candy:
-            - '@github.com/overthinkos/overthink/candy/agent-forwarding:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/sshd:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/charly:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/charly-mcp:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/container-nesting:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/dbus:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/tmux:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/language-runtimes:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/golang:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/nodejs:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/rust:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/pixi:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/uv:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/build-toolchain:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/dev-tools:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/pre-commit:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/direnv:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/gh:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/typst:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/asciinema:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/claude-code:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/codex:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/gemini:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/forgecode:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/oracle:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/devops-tools:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/kubernetes:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/docker-ce:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/github-actions:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/google-cloud:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/google-cloud-npm:v2026.159.1413'
-            - '@github.com/overthinkos/overthink/candy/grafana-tools:v2026.159.1413'
+            - '@github.com/overthinkos/overthink/candy/agent-forwarding:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/sshd:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/charly:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/charly-mcp:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/container-nesting:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/dbus:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/tmux:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/language-runtimes:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/golang:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/nodejs:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/rust:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/pixi:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/uv:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/build-toolchain:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/dev-tools:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/pre-commit:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/direnv:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/gh:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/typst:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/asciinema:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/claude-code:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/codex:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/gemini:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/forgecode:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/oracle:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/devops-tools:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/kubernetes:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/docker-ce:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/github-actions:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/google-cloud:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/google-cloud-npm:v2026.160.0856'
+            - '@github.com/overthinkos/overthink/candy/grafana-tools:v2026.160.0856'
         port:
             - 2222:2222
             - 18765:18765

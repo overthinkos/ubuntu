@@ -24,7 +24,7 @@
 #  Directly buildable: `charly box build ubuntu` (the build verb defaults to this
 #  charly.yml). From the parent repo: `charly -C image/ubuntu image build
 #  ubuntu`, or anywhere: `charly --repo overthinkos/ubuntu image build ubuntu`.
-version: 2026.159.3
+version: 2026.159.1912
 defaults:
     platform:
         - linux/amd64
@@ -40,7 +40,7 @@ import:
     # Carries distro.ubuntu (inherits: debian) + distro.debian + the deb format
     # + the debootstrap builder template. Ubuntu roots on external bases, so no
     # namespaced (`charly`) import is needed.
-    - '@github.com/overthinkos/overthink/build.yml:v2026.159.1413'
+    - '@github.com/overthinkos/overthink/build.yml:v2026.160.0856'
     - box.yml
     - vm.yml
     - pod.yml
@@ -61,7 +61,7 @@ eval:
         # the .deb — the charly candy supplies it via the tailscale apt repo (noble), so
         # it must ALSO be present after deploy.
         add_candy:
-            - '@github.com/overthinkos/overthink/candy/charly:v2026.159.1413'
+            - '@github.com/overthinkos/overthink/candy/charly:v2026.160.0856'
         install_opts:
             allow_repo_changes: true
             allow_root_tasks: true
