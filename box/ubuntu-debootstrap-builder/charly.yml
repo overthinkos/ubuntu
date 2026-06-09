@@ -7,4 +7,4 @@ box:
     build:
         - deb
     candy:
-        - '@github.com/overthinkos/overthink/candy/debootstrap-builder:v2026.160.0856'
+        - '@github.com/overthinkos/overthink/candy/debootstrap-builder:v2026.160.2017'
