@@ -1,4 +1,4 @@
-# image/ubuntu — signpost (not the rule-set)
+# box/ubuntu — signpost (not the rule-set)
 
 This submodule is the **Ubuntu** base image family: a `charly.yml` (plus
 per-kind sibling files) that imports the main repo under the `charly` namespace and `build.yml` flat.

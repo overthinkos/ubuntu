@@ -1,5 +1,5 @@
 #  overthinkos/ubuntu — the Ubuntu image family, split out of the main
-#  opencharly repo (2026-05). Mounted as a git submodule at image/ubuntu.
+#  opencharly repo (2026-05). Mounted as a git submodule at box/ubuntu.
 #
 #  SINGLE-FILE config (2026-05 import-namespace cutover): every local entity
 #  (the ubuntu base + debootstrap family, the ubuntu-coder/-builder images, the
@@ -22,8 +22,8 @@
 #  coupling — the only edge is ubuntu → main (layers + build.yml).
 #
 #  Directly buildable: `charly box build ubuntu` (the build verb defaults to this
-#  charly.yml). From the parent repo: `charly -C image/ubuntu image build
-#  ubuntu`, or anywhere: `charly --repo overthinkos/ubuntu image build ubuntu`.
+#  charly.yml). From the parent repo: `charly -C box/ubuntu box build
+#  ubuntu`, or anywhere: `charly --repo overthinkos/ubuntu box build ubuntu`.
 version: 2026.160.1301
 defaults:
     platform:

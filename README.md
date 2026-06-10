@@ -1,7 +1,7 @@
 # overthinkos/ubuntu
 
 The **Ubuntu image family** for [OpenCharly](https://github.com/overthinkos/overthink),
-split into its own repository and mounted as a git submodule at `image/ubuntu`
+split into its own repository and mounted as a git submodule at `box/ubuntu`
 of the main repo.
 
 ## What's here
@@ -47,10 +47,10 @@ pulls nothing back. The image DAG is acyclic
 charly box build ubuntu
 
 # From the parent opencharly repo:
-charly -C image/ubuntu image build ubuntu
+charly -C box/ubuntu box build ubuntu
 
 # Standalone, against the published repo:
-charly --repo overthinkos/ubuntu image build ubuntu
+charly --repo overthinkos/ubuntu box build ubuntu
 ```
 
 The first build resolves the upstream github references into
@@ -62,7 +62,7 @@ The first build resolves the upstream github references into
 `ubuntu-debootstrap` builds an Ubuntu rootfs from scratch via `debootstrap`
 inside the privileged `ubuntu-debootstrap-builder` container (`from:
 builder:debootstrap`). `eval-ubuntu-debootstrap-vm` boots that rootfs under
-libvirt/QEMU and carries `disposable: true`, so `charly -C image/ubuntu update
+libvirt/QEMU and carries `disposable: true`, so `charly -C box/ubuntu update
 eval-ubuntu-debootstrap-vm` rebuilds it unattended.
 
 ## Requirements
