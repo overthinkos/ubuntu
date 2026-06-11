@@ -2,9 +2,9 @@ box:
     name: ubuntu-builder
     base: ubuntu
     candy:
-        - '@github.com/overthinkos/overthink/candy/pixi:v2026.160.2017'
-        - '@github.com/overthinkos/overthink/candy/nodejs:v2026.160.2017'
-        - '@github.com/overthinkos/overthink/candy/build-toolchain:v2026.160.2017'
+        - '@github.com/overthinkos/overthink/candy/pixi:v2026.162.0856'
+        - '@github.com/overthinkos/overthink/candy/nodejs:v2026.162.0856'
+        - '@github.com/overthinkos/overthink/candy/build-toolchain:v2026.162.0856'
     produce:
         - pixi
         - npm
