@@ -34,23 +34,8 @@ box:
         - '@github.com/overthinkos/overthink/candy/google-cloud:v2026.162.0856'
         - '@github.com/overthinkos/overthink/candy/google-cloud-npm:v2026.162.0856'
         - '@github.com/overthinkos/overthink/candy/grafana-tools:v2026.162.0856'
-    eval:
-        - command: test -x ${HOME}/.npm-global/bin/claude && test -x ${HOME}/.npm-global/bin/codex && test -x ${HOME}/.npm-global/bin/gemini && test -x ${HOME}/.npm-global/bin/forge
-          id: ubuntu-coder-ai-clis
-          exit_status: 0
-        - command: test -x /usr/bin/go && test -x /usr/bin/node && { test -x ${HOME}/.cargo/bin/cargo || test -x /usr/bin/cargo; }
-          id: ubuntu-coder-languages
-          exit_status: 0
-        - command: test -x /usr/bin/kubectl && test -x /usr/bin/docker && test -x /usr/local/bin/aws && test -x /usr/bin/gcloud && test -x /usr/local/bin/tofu
-          id: ubuntu-coder-devops
-          exit_status: 0
-        - addr: 127.0.0.1:${HOST_PORT:2222}
-          id: ubuntu-coder-sshd-port
-          timeout: 5s
-          scope: deploy
-          reachable: true
-        - addr: 127.0.0.1:${HOST_PORT:18765}
-          id: ubuntu-coder-mcp-port
-          timeout: 5s
-          scope: deploy
-          reachable: true
+    # No box-level eval: every CLI / language / devops binary and the sshd +
+    # charly-mcp ports belong to their providing candy's baked eval
+    # (claude-code/codex/gemini/forgecode, golang/nodejs/rust,
+    # kubernetes/docker-ce/devops-tools/google-cloud, sshd, charly-mcp, charly),
+    # so ONE candy check covers every coder box composing them.
