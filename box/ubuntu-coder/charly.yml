@@ -34,9 +34,6 @@ box:
         - '@github.com/overthinkos/overthink/candy/google-cloud:v2026.160.2017'
         - '@github.com/overthinkos/overthink/candy/google-cloud-npm:v2026.160.2017'
         - '@github.com/overthinkos/overthink/candy/grafana-tools:v2026.160.2017'
-    port:
-        - 2222:2222
-        - 18765:18765
     eval:
         - command: test -x ${HOME}/.npm-global/bin/claude && test -x ${HOME}/.npm-global/bin/codex && test -x ${HOME}/.npm-global/bin/gemini && test -x ${HOME}/.npm-global/bin/forge
           id: ubuntu-coder-ai-clis
