@@ -24,7 +24,7 @@
 #  Directly buildable: `charly box build ubuntu` (the build verb defaults to this
 #  charly.yml). From the parent repo: `charly -C box/ubuntu box build
 #  ubuntu`, or anywhere: `charly --repo overthinkos/ubuntu box build ubuntu`.
-version: 2026.164.0004
+version: 2026.164.0006
 defaults:
     platform:
         - linux/amd64
@@ -57,37 +57,37 @@ check:
             allow_repo_changes: true
             allow_root_tasks: true
             skip_incompatible: true # skip composed layers lacking a guest-format section; the localpkg .deb/.rpm Depends/Requires install the packages
-        scenario:
-            - name: localpkg-deb-autoresolve
-              step:
-                - id: localpkg-deb-autoresolve
-                  description: charly installed as the opencharly .deb via localpkg, mandatory deps auto-resolved by apt; tailscale supplied by the charly layer
-                  command: |
-                    dpkg -s opencharly >/dev/null 2>&1 &&
-                    dpkg -s podman >/dev/null 2>&1 &&
-                    dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
-                    dpkg -s tailscale >/dev/null 2>&1 &&
-                    command -v charly >/dev/null 2>&1 &&
-                    charly version &&
-                    echo LOCALPKG-DEB-AUTORESOLVE-OK
-                  stdout:
-                    - contains: LOCALPKG-DEB-AUTORESOLVE-OK
-                  exit_status: 0
-                  context:
-                    - runtime
-            - name: tailscale-repo-suite-ubuntu-noble
-              step:
-                # distro-cascade witness: the per-distro cascade must resolve the
-                # UBUNTU (noble) tailscale apt repo on this ubuntu guest — deterministically,
-                # NOT debian/trixie. The VM chain [ubuntu:24.04, ubuntu] (distroTagChain)
-                # matches candy/charly's `ubuntu` tag section. This is the original
-                # non-deterministic-collapse bug fixed and proven on a live VM.
-                - id: tailscale-repo-suite-ubuntu-noble
-                  description: distro-cascade resolves the ubuntu/noble tailscale apt repo (not debian/trixie) deterministically
-                  command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
-                  exit_status: 0
-                  context:
-                    - runtime
+        plan:
+            - check: |
+                command=dpkg -s opencharly >/dev/null 2>&1 &&
+                dpkg -s podman >/dev/null 2>&1 &&
+                dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
+                dpkg -s tailscale >/dev/null 2>&1 &&
+                command -v charly >/dev/null 2>&1 &&
+                charly version &&
+                echo LOCALPKG-DEB-AUTORESOLVE-OK
+              id: localpkg-deb-autoresolve
+              description: charly installed as the opencharly .deb via localpkg, mandatory deps auto-resolved by apt; tailscale supplied by the charly layer
+              command: |
+                dpkg -s opencharly >/dev/null 2>&1 &&
+                dpkg -s podman >/dev/null 2>&1 &&
+                dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
+                dpkg -s tailscale >/dev/null 2>&1 &&
+                command -v charly >/dev/null 2>&1 &&
+                charly version &&
+                echo LOCALPKG-DEB-AUTORESOLVE-OK
+              stdout:
+                - contains: LOCALPKG-DEB-AUTORESOLVE-OK
+              exit_status: 0
+              context:
+                - runtime
+            - check: command=grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
+              id: tailscale-repo-suite-ubuntu-noble
+              description: distro-cascade resolves the ubuntu/noble tailscale apt repo (not debian/trixie) deterministically
+              command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
+              exit_status: 0
+              context:
+                - runtime
 vm:
     ubuntu-debootstrap:
         # Bootstrap-from-scratch via debootstrap inside the ubuntu-debootstrap-
