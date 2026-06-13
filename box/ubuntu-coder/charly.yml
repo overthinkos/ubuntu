@@ -34,8 +34,8 @@ box:
         - '@github.com/overthinkos/overthink/candy/google-cloud:v2026.162.0856'
         - '@github.com/overthinkos/overthink/candy/google-cloud-npm:v2026.162.0856'
         - '@github.com/overthinkos/overthink/candy/grafana-tools:v2026.162.0856'
-    # No box-level eval: every CLI / language / devops binary and the sshd +
-    # charly-mcp ports belong to their providing candy's baked eval
+    # No box-level check: every CLI / language / devops binary and the sshd +
+    # charly-mcp ports belong to their providing candy's baked check
     # (claude-code/codex/gemini/forgecode, golang/nodejs/rust,
     # kubernetes/docker-ce/devops-tools/google-cloud, sshd, charly-mcp, charly),
     # so ONE candy check covers every coder box composing them.

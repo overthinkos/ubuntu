@@ -4,7 +4,7 @@
 .containerignore
 .dockerignore
 # Eval run scratch
-.eval/
+.check/
 # VM / disk-image build outputs
 output/
 # Editor scratch

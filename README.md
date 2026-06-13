@@ -10,7 +10,7 @@ of the main repo.
 |---|---|
 | `image:` | `ubuntu` (base), `ubuntu-builder`, `ubuntu-coder`, `ubuntu-debootstrap`, `ubuntu-debootstrap-builder` |
 | `vm:` | `ubuntu-debootstrap` (bootstrap-from-scratch via debootstrap) |
-| `eval:` | `eval-ubuntu-debootstrap-vm` (disposable bootstrap-VM bed) |
+| `check:` | `check-ubuntu-debootstrap-vm` (disposable bootstrap-VM bed) |
 
 ## Composition by reference — nothing is vendored
 
@@ -57,13 +57,13 @@ The first build resolves the upstream github references into
 `~/.cache/charly/repos/` and materializes the referenced layers under
 `.build/_layers/`.
 
-## debootstrap-from-scratch (`ubuntu-debootstrap` / `eval-ubuntu-debootstrap-vm`)
+## debootstrap-from-scratch (`ubuntu-debootstrap` / `check-ubuntu-debootstrap-vm`)
 
 `ubuntu-debootstrap` builds an Ubuntu rootfs from scratch via `debootstrap`
 inside the privileged `ubuntu-debootstrap-builder` container (`from:
-builder:debootstrap`). `eval-ubuntu-debootstrap-vm` boots that rootfs under
+builder:debootstrap`). `check-ubuntu-debootstrap-vm` boots that rootfs under
 libvirt/QEMU and carries `disposable: true`, so `charly -C box/ubuntu update
-eval-ubuntu-debootstrap-vm` rebuilds it unattended.
+check-ubuntu-debootstrap-vm` rebuilds it unattended.
 
 ## Requirements
 

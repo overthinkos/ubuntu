@@ -3,7 +3,7 @@
 #
 #  SINGLE-FILE config (2026-05 import-namespace cutover): every local entity
 #  (the ubuntu base + debootstrap family, the ubuntu-coder/-builder images, the
-#  ubuntu bootstrap VM, and the disposable eval bed) is inlined here. This repo
+#  ubuntu bootstrap VM, and the disposable check bed) is inlined here. This repo
 #  VENDORS NOTHING — every layer is an `@github.com/...` ref, and the shared
 #  build-config arrives via `import:`.
 #
@@ -24,7 +24,7 @@
 #  Directly buildable: `charly box build ubuntu` (the build verb defaults to this
 #  charly.yml). From the parent repo: `charly -C box/ubuntu box build
 #  ubuntu`, or anywhere: `charly --repo overthinkos/ubuntu box build ubuntu`.
-version: 2026.163.0928
+version: 2026.164.0004
 defaults:
     platform:
         - linux/amd64
@@ -36,12 +36,12 @@ defaults:
         auto: false
         max_mb: 128
 import: []
-eval:
-    # Disposable R10 test bed for the ubuntu bootstrap VM (kind:eval — the
-    # 2026-05 deploy→eval unification moved repo-shipped disposable beds out of
+check:
+    # Disposable R10 test bed for the ubuntu bootstrap VM (kind:check — the
+    # 2026-05 deploy→check unification moved repo-shipped disposable beds out of
     # deploy.yml). disposable: true is the sole authorization for the unattended
-    # destroy+rebuild driven by `charly eval run eval-ubuntu-debootstrap-vm`.
-    eval-ubuntu-debootstrap-vm:
+    # destroy+rebuild driven by `charly check run check-ubuntu-debootstrap-vm`.
+    check-ubuntu-debootstrap-vm:
         target: vm
         vm: ubuntu-debootstrap
         disposable: true
@@ -57,31 +57,37 @@ eval:
             allow_repo_changes: true
             allow_root_tasks: true
             skip_incompatible: true # skip composed layers lacking a guest-format section; the localpkg .deb/.rpm Depends/Requires install the packages
-        eval:
-            - id: localpkg-deb-autoresolve
-              scope: deploy
-              description: charly installed as the opencharly .deb via localpkg, mandatory deps auto-resolved by apt; tailscale supplied by the charly layer
-              command: |
-                dpkg -s opencharly >/dev/null 2>&1 &&
-                dpkg -s podman >/dev/null 2>&1 &&
-                dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
-                dpkg -s tailscale >/dev/null 2>&1 &&
-                command -v charly >/dev/null 2>&1 &&
-                charly version &&
-                echo LOCALPKG-DEB-AUTORESOLVE-OK
-              stdout:
-                - contains: LOCALPKG-DEB-AUTORESOLVE-OK
-              exit_status: 0
-            # distro-cascade witness: the per-distro cascade must resolve the
-            # UBUNTU (noble) tailscale apt repo on this ubuntu guest — deterministically,
-            # NOT debian/trixie. The VM chain [ubuntu:24.04, ubuntu] (distroTagChain)
-            # matches candy/charly's `ubuntu` tag section. This is the original
-            # non-deterministic-collapse bug fixed and proven on a live VM.
-            - id: tailscale-repo-suite-ubuntu-noble
-              scope: deploy
-              description: distro-cascade resolves the ubuntu/noble tailscale apt repo (not debian/trixie) deterministically
-              command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
-              exit_status: 0
+        scenario:
+            - name: localpkg-deb-autoresolve
+              step:
+                - id: localpkg-deb-autoresolve
+                  description: charly installed as the opencharly .deb via localpkg, mandatory deps auto-resolved by apt; tailscale supplied by the charly layer
+                  command: |
+                    dpkg -s opencharly >/dev/null 2>&1 &&
+                    dpkg -s podman >/dev/null 2>&1 &&
+                    dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
+                    dpkg -s tailscale >/dev/null 2>&1 &&
+                    command -v charly >/dev/null 2>&1 &&
+                    charly version &&
+                    echo LOCALPKG-DEB-AUTORESOLVE-OK
+                  stdout:
+                    - contains: LOCALPKG-DEB-AUTORESOLVE-OK
+                  exit_status: 0
+                  context:
+                    - runtime
+            - name: tailscale-repo-suite-ubuntu-noble
+              step:
+                # distro-cascade witness: the per-distro cascade must resolve the
+                # UBUNTU (noble) tailscale apt repo on this ubuntu guest — deterministically,
+                # NOT debian/trixie. The VM chain [ubuntu:24.04, ubuntu] (distroTagChain)
+                # matches candy/charly's `ubuntu` tag section. This is the original
+                # non-deterministic-collapse bug fixed and proven on a live VM.
+                - id: tailscale-repo-suite-ubuntu-noble
+                  description: distro-cascade resolves the ubuntu/noble tailscale apt repo (not debian/trixie) deterministically
+                  command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
+                  exit_status: 0
+                  context:
+                    - runtime
 vm:
     ubuntu-debootstrap:
         # Bootstrap-from-scratch via debootstrap inside the ubuntu-debootstrap-
