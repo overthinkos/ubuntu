@@ -52,7 +52,7 @@ check:
         # the .deb — the charly candy supplies it via the tailscale apt repo (noble), so
         # it must ALSO be present after deploy.
         add_candy:
-            - '@github.com/overthinkos/overthink/candy/charly:v2026.165.0934'
+            - '@github.com/overthinkos/overthink/candy/charly:v2026.165.2208'
         install_opts:
             allow_repo_changes: true
             allow_root_tasks: true
