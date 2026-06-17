@@ -147,7 +147,7 @@ vm:
             user: ubuntu
             # 12229 (not 12228): the cachyos-gpu operator VM forwards host
             # 12228; the disposable ubuntu bed moves so it can run alongside
-            # the operator. See CHANGELOG (2026-05 VM host-port deconfliction).
+            # the operator. See the project CHANGELOG/2026-05.md (VM host-port deconfliction).
             port: 12229
             key_source: generate
         cloud_init:
