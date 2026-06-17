@@ -46,6 +46,7 @@ check:
         vm: ubuntu-debootstrap
         disposable: true
         lifecycle: dev
+        description: Sole proof the charly toolchain installs as the opencharly .deb via localpkg on a from-scratch debootstrap Ubuntu 24.04 VM, with apt auto-resolving deps and the distro-cascade deterministically picking the ubuntu/noble tailscale repo (not debian/trixie). Boots the ubuntu-debootstrap VM under libvirt/QEMU (UEFI-insecure, q35, ext4, ssh 12229), overlays the charly candy via add_candy, then runs two guest command checks — dpkg -s opencharly/podman/libvirt-daemon-system/tailscale plus charly version (LOCALPKG-DEB-AUTORESOLVE-OK), and grep of tailscale.list for 'stable/ubuntu noble'.
         # deb localpkg AUTO-RESOLVE witness (ubuntu): charly installed as the
         # `opencharly` .deb via localpkg (one deb source serves Debian + Ubuntu),
         # mandatory deps auto-resolved by apt from Ubuntu main. tailscale is NOT in
@@ -85,6 +86,35 @@ check:
               id: tailscale-repo-suite-ubuntu-noble
               description: distro-cascade resolves the ubuntu/noble tailscale apt repo (not debian/trixie) deterministically
               command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
+              exit_status: 0
+              context:
+                - runtime
+    # Disposable R10 pod bed for the ubuntu-coder image (kind:check, target:pod) —
+    # the pod x ubuntu cross-cell the bootstrap-VM bed above does not cover. Mirrors
+    # check-fedora-coder-pod on the deb substrate; ports auto-allocate on 127.0.0.1
+    # at deploy (no port: pin), so a run never collides with a production deploy or a
+    # concurrent bed. The composed candies' baked file/package/service/command checks
+    # (incl. the noble exclude_distros package divergences) run via `charly check
+    # live`; this bed adds a host-side status assertion + a noble base-identity probe.
+    check-ubuntu-coder-pod:
+        target: pod
+        box: ubuntu-coder
+        disposable: true
+        lifecycle: dev
+        description: R10 bed for the ubuntu-coder image — proves the Ubuntu developer pod (sshd + language runtimes + AI CLIs on the Ubuntu 24.04 noble base) builds and runs as one composed pod. Builds box:ubuntu-coder, deploys, runs the composed baked file/package/service/command checks + charly status --json, and exercises the noble exclude_distros package divergences.
+        plan:
+            - check: command=charly status --json
+              id: status-shows-pod
+              command: charly status --json
+              in_container: false
+              stdout:
+                - contains: '"kind": "pod"'
+                - contains: check-ubuntu-coder-pod
+              context:
+                - runtime
+            - check: the guest base is Ubuntu noble (not Debian)
+              id: noble-base-identity
+              command: grep -q 'VERSION_CODENAME=noble' /etc/os-release
               exit_status: 0
               context:
                 - runtime
