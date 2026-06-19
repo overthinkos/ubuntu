@@ -3,7 +3,7 @@
 This submodule is the **Ubuntu** base image family: a self-contained `charly.yml`
 that pulls main's shared candy layers via `@github` refs — no namespace import
 (`import: []`); the distro/builder/init build vocabulary is embedded in the `charly`
-binary (`charly/charly.cue`).
+binary (`charly/charly.yml`).
 
 **Load these skills FIRST (R0):**
 

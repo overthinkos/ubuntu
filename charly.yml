@@ -6,7 +6,7 @@
 #  ubuntu bootstrap VM, and the disposable check bed) is inlined here. This repo
 #  VENDORS NOTHING — every layer is an `@github.com/...` ref into main's shared
 #  candy library, and the shared build-config (distro/builder/init vocabulary) is
-#  EMBEDDED in the `charly` binary (`charly/charly.cue`) — not imported.
+#  EMBEDDED in the `charly` binary (`charly/charly.yml`) — not imported.
 #
 #  import: is EMPTY here (`import: []`). Ubuntu roots on EXTERNAL bases entirely
 #  (the `ubuntu` base is docker.io `ubuntu:24.04`, the debootstrap builder is
@@ -14,7 +14,7 @@
 #  vocabulary embedded in the binary, it imports NOTHING.
 #
 #  Ubuntu is deb-family: `distro.ubuntu` is `inherits: debian` in the EMBEDDED
-#  build vocabulary (`charly/charly.cue`, which carries BOTH the debian and ubuntu
+#  build vocabulary (`charly/charly.yml`, which carries BOTH the debian and ubuntu
 #  distro configs), so the inheritance resolves from the embedded vocab. Nothing
 #  in the main repo consumes any Ubuntu image, so there is NO main ↔ ubuntu
 #  coupling — the only edge is ubuntu → main's shared candy layers via `@github` refs.
@@ -124,7 +124,7 @@ ubuntu-debootstrap:
         # Bootstrap-from-scratch via debootstrap inside the ubuntu-debootstrap-
         # builder container, then booted under libvirt/QEMU. The debootstrap
         # builder template + distro.ubuntu config (which inherits debian) resolve
-        # from the embedded build vocabulary (`charly/charly.cue`).
+        # from the embedded build vocabulary (`charly/charly.yml`).
         source:
             kind: bootstrap
             builder: debootstrap

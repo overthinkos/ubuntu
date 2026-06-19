@@ -20,7 +20,7 @@ and the shared build vocabulary is embedded in the `charly` binary:
 
 - every candy in `charly.yml` is an `@github.com/overthinkos/overthink/candy/<name>:<tag>` ref;
 - the distro/builder/init build vocabulary is **embedded in the `charly` binary**
-  (`charly/charly.cue`) — `import:` is empty (`import: []`). Ubuntu is deb-family:
+  (`charly/charly.yml`) — `import:` is empty (`import: []`). Ubuntu is deb-family:
   `distro.ubuntu` is `inherits: debian`, and the embedded vocabulary carries BOTH
   the `ubuntu` and `debian` distro configs, so the inheritance resolves with no
   import. It also carries the `deb` format template and the `debootstrap` builder
