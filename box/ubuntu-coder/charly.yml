@@ -1,41 +1,42 @@
-box:
-    name: ubuntu-coder
-    base: ubuntu
-    candy:
-        - '@github.com/overthinkos/overthink/candy/agent-forwarding:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/sshd:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/charly:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/charly-mcp:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/container-nesting:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/dbus:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/tmux:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/language-runtimes:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/golang:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/nodejs:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/rust:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/pixi:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/uv:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/build-toolchain:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/dev-tools:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/pre-commit:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/direnv:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/gh:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/typst:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/asciinema:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/claude-code:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/codex:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/gemini:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/forgecode:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/oracle:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/devops-tools:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/kubernetes:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/docker-ce:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/github-actions:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/google-cloud:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/google-cloud-npm:v2026.166.1222'
-        - '@github.com/overthinkos/overthink/candy/grafana-tools:v2026.166.1222'
-    # No box-level check: every CLI / language / devops binary and the sshd +
-    # charly-mcp ports belong to their providing candy's baked check
-    # (claude-code/codex/gemini/forgecode, golang/nodejs/rust,
-    # kubernetes/docker-ce/devops-tools/google-cloud, sshd, charly-mcp, charly),
-    # so ONE candy check covers every coder box composing them.
+ubuntu-coder:
+    box:
+        base: ubuntu
+    ubuntu-coder-candy:
+        candy:
+            - '@github.com/overthinkos/overthink/candy/agent-forwarding:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/sshd:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/charly:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/charly-mcp:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/container-nesting:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/dbus:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/tmux:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/language-runtimes:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/golang:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/nodejs:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/rust:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/pixi:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/uv:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/build-toolchain:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/dev-tools:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/pre-commit:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/direnv:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/gh:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/typst:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/asciinema:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/claude-code:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/codex:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/gemini:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/forgecode:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/oracle:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/devops-tools:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/kubernetes:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/docker-ce:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/github-actions:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/google-cloud:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/google-cloud-npm:v2026.166.1222'
+            - '@github.com/overthinkos/overthink/candy/grafana-tools:v2026.166.1222'
+        # No box-level check: every CLI / language / devops binary and the sshd +
+        # charly-mcp ports belong to their providing candy's baked check
+        # (claude-code/codex/gemini/forgecode, golang/nodejs/rust,
+        # kubernetes/docker-ce/devops-tools/google-cloud, sshd, charly-mcp, charly),
+        # so ONE candy check covers every coder box composing them.

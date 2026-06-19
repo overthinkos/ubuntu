@@ -24,7 +24,7 @@
 #  Directly buildable: `charly box build ubuntu` (the build verb defaults to this
 #  charly.yml). From the parent repo: `charly -C box/ubuntu box build
 #  ubuntu`, or anywhere: `charly --repo overthinkos/ubuntu box build ubuntu`.
-version: 2026.165.1048
+version: 2026.169.0004
 defaults:
     platform:
         - linux/amd64
@@ -36,17 +36,17 @@ defaults:
         auto: false
         max_mb: 128
 import: []
-check:
-    # Disposable R10 test bed for the ubuntu bootstrap VM (kind:check — the
-    # 2026-05 deploy→check unification moved repo-shipped disposable beds out of
-    # deploy.yml). disposable: true is the sole authorization for the unattended
-    # destroy+rebuild driven by `charly check run check-ubuntu-debootstrap-vm`.
-    check-ubuntu-debootstrap-vm:
-        target: vm
+# Disposable R10 test bed for the ubuntu bootstrap VM (kind:check — the
+# 2026-05 deploy→check unification moved repo-shipped disposable beds out of
+# deploy.yml). disposable: true is the sole authorization for the unattended
+# destroy+rebuild driven by `charly check run check-ubuntu-debootstrap-vm`.
+check-ubuntu-debootstrap-vm:
+    bundle:
         vm: ubuntu-debootstrap
         disposable: true
         lifecycle: dev
         description: Sole proof the charly toolchain installs as the opencharly .deb via localpkg on a from-scratch debootstrap Ubuntu 24.04 VM, with apt auto-resolving deps and the distro-cascade deterministically picking the ubuntu/noble tailscale repo (not debian/trixie). Boots the ubuntu-debootstrap VM under libvirt/QEMU (UEFI-insecure, q35, ext4, ssh 12229), overlays the charly candy via add_candy, then runs two guest command checks — dpkg -s opencharly/podman/libvirt-daemon-system/tailscale plus charly version (LOCALPKG-DEB-AUTORESOLVE-OK), and grep of tailscale.list for 'stable/ubuntu noble'.
+    check-ubuntu-debootstrap-vm-add_candy:
         # deb localpkg AUTO-RESOLVE witness (ubuntu): charly installed as the
         # `opencharly` .deb via localpkg (one deb source serves Debian + Ubuntu),
         # mandatory deps auto-resolved by apt from Ubuntu main. tailscale is NOT in
@@ -54,72 +54,75 @@ check:
         # it must ALSO be present after deploy.
         add_candy:
             - '@github.com/overthinkos/overthink/candy/charly:v2026.166.1222'
+    check-ubuntu-debootstrap-vm-install_opts:
         install_opts:
             allow_repo_changes: true
             allow_root_tasks: true
             skip_incompatible: true # skip composed layers lacking a guest-format section; the localpkg .deb/.rpm Depends/Requires install the packages
-        plan:
-            - check: |
-                command=dpkg -s opencharly >/dev/null 2>&1 &&
-                dpkg -s podman >/dev/null 2>&1 &&
-                dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
-                dpkg -s tailscale >/dev/null 2>&1 &&
-                command -v charly >/dev/null 2>&1 &&
-                charly version &&
-                echo LOCALPKG-DEB-AUTORESOLVE-OK
-              id: localpkg-deb-autoresolve
-              description: charly installed as the opencharly .deb via localpkg, mandatory deps auto-resolved by apt; tailscale supplied by the charly layer
-              command: |
-                dpkg -s opencharly >/dev/null 2>&1 &&
-                dpkg -s podman >/dev/null 2>&1 &&
-                dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
-                dpkg -s tailscale >/dev/null 2>&1 &&
-                command -v charly >/dev/null 2>&1 &&
-                charly version &&
-                echo LOCALPKG-DEB-AUTORESOLVE-OK
-              stdout:
-                - contains: LOCALPKG-DEB-AUTORESOLVE-OK
-              exit_status: 0
-              context:
-                - runtime
-            - check: command=grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
-              id: tailscale-repo-suite-ubuntu-noble
-              description: distro-cascade resolves the ubuntu/noble tailscale apt repo (not debian/trixie) deterministically
-              command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
-              exit_status: 0
-              context:
-                - runtime
-    # Disposable R10 pod bed for the ubuntu-coder image (kind:check, target:pod) —
-    # the pod x ubuntu cross-cell the bootstrap-VM bed above does not cover. Mirrors
-    # check-fedora-coder-pod on the deb substrate; ports auto-allocate on 127.0.0.1
-    # at deploy (no port: pin), so a run never collides with a production deploy or a
-    # concurrent bed. The composed candies' baked file/package/service/command checks
-    # (incl. the noble exclude_distros package divergences) run via `charly check
-    # live`; this bed adds a host-side status assertion + a noble base-identity probe.
-    check-ubuntu-coder-pod:
-        target: pod
+    localpkg-deb-autoresolve:
+        check: |
+            command=dpkg -s opencharly >/dev/null 2>&1 &&
+            dpkg -s podman >/dev/null 2>&1 &&
+            dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
+            dpkg -s tailscale >/dev/null 2>&1 &&
+            command -v charly >/dev/null 2>&1 &&
+            charly version &&
+            echo LOCALPKG-DEB-AUTORESOLVE-OK
+        id: localpkg-deb-autoresolve
+        description: charly installed as the opencharly .deb via localpkg, mandatory deps auto-resolved by apt; tailscale supplied by the charly layer
+        command: |
+            dpkg -s opencharly >/dev/null 2>&1 &&
+            dpkg -s podman >/dev/null 2>&1 &&
+            dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
+            dpkg -s tailscale >/dev/null 2>&1 &&
+            command -v charly >/dev/null 2>&1 &&
+            charly version &&
+            echo LOCALPKG-DEB-AUTORESOLVE-OK
+        stdout:
+            - contains: LOCALPKG-DEB-AUTORESOLVE-OK
+        exit_status: 0
+        context:
+            - runtime
+    tailscale-repo-suite-ubuntu-noble:
+        check: command=grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
+        id: tailscale-repo-suite-ubuntu-noble
+        description: distro-cascade resolves the ubuntu/noble tailscale apt repo (not debian/trixie) deterministically
+        command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
+        exit_status: 0
+        context:
+            - runtime
+# Disposable R10 pod bed for the ubuntu-coder image (kind:check, target:pod) —
+# the pod x ubuntu cross-cell the bootstrap-VM bed above does not cover. Mirrors
+# check-fedora-coder-pod on the deb substrate; ports auto-allocate on 127.0.0.1
+# at deploy (no port: pin), so a run never collides with a production deploy or a
+# concurrent bed. The composed candies' baked file/package/service/command checks
+# (incl. the noble exclude_distros package divergences) run via `charly check
+# live`; this bed adds a host-side status assertion + a noble base-identity probe.
+check-ubuntu-coder-pod:
+    bundle:
         box: ubuntu-coder
         disposable: true
         lifecycle: dev
         description: R10 bed for the ubuntu-coder image — proves the Ubuntu developer pod (sshd + language runtimes + AI CLIs on the Ubuntu 24.04 noble base) builds and runs as one composed pod. Builds box:ubuntu-coder, deploys, runs the composed baked file/package/service/command checks + charly status --json, and exercises the noble exclude_distros package divergences.
-        plan:
-            - check: command=charly status --json
-              id: status-shows-pod
-              command: charly status --json
-              in_container: false
-              stdout:
-                - contains: '"kind": "pod"'
-                - contains: check-ubuntu-coder-pod
-              context:
-                - runtime
-            - check: the guest base is Ubuntu noble (not Debian)
-              id: noble-base-identity
-              command: grep -q 'VERSION_CODENAME=noble' /etc/os-release
-              exit_status: 0
-              context:
-                - runtime
-vm:
-    ubuntu-debootstrap:
+    status-shows-pod:
+        check: command=charly status --json
+        id: status-shows-pod
+        command: charly status --json
+        in_container: false
+        stdout:
+            - contains: '"kind": "pod"'
+            - contains: check-ubuntu-coder-pod
+        context:
+            - runtime
+    noble-base-identity:
+        check: the guest base is Ubuntu noble (not Debian)
+        id: noble-base-identity
+        command: grep -q 'VERSION_CODENAME=noble' /etc/os-release
+        exit_status: 0
+        context:
+            - runtime
+ubuntu-debootstrap:
+    vm:
         # Bootstrap-from-scratch via debootstrap inside the ubuntu-debootstrap-
         # builder container, then booted under libvirt/QEMU. The debootstrap
         # builder template + distro.ubuntu config (which inherits debian) resolve
@@ -159,8 +162,6 @@ vm:
                 - systemctl enable --now ssh
                 - systemctl enable --now qemu-guest-agent
                 - "{ ip a; echo ===listen===; ss -tlnp; echo ===ssh===; systemctl status ssh --no-pager; } > /boot/charly-diag.txt 2>&1"
-pod: {}
-k8s: {}
 discover:
     - path: box
       recursive: true

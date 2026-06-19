@@ -1,10 +1,12 @@
-box:
-    name: ubuntu-debootstrap-builder
-    base: debian:13
-    distro:
-        - debian:13
-        - debian
-    build:
-        - deb
-    candy:
-        - '@github.com/overthinkos/overthink/candy/debootstrap-builder:v2026.166.1222'
+ubuntu-debootstrap-builder:
+    box:
+        base: debian:13
+        build:
+            - deb
+    ubuntu-debootstrap-builder-distro:
+        distro:
+            - debian:13
+            - debian
+    ubuntu-debootstrap-builder-candy:
+        candy:
+            - '@github.com/overthinkos/overthink/candy/debootstrap-builder:v2026.166.1222'
