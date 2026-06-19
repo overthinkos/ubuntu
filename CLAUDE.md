@@ -1,7 +1,9 @@
 # box/ubuntu — signpost (not the rule-set)
 
-This submodule is the **Ubuntu** base image family: a `charly.yml` (plus
-per-kind sibling files) that imports the main repo under the `charly` namespace and `build.yml` flat.
+This submodule is the **Ubuntu** base image family: a self-contained `charly.yml`
+that pulls main's shared candy layers via `@github` refs — no namespace import
+(`import: []`); the distro/builder/init build vocabulary is embedded in the `charly`
+binary (`charly/charly.cue`).
 
 **Load these skills FIRST (R0):**
 

@@ -4,22 +4,20 @@
 #  SINGLE-FILE config (2026-05 import-namespace cutover): every local entity
 #  (the ubuntu base + debootstrap family, the ubuntu-coder/-builder images, the
 #  ubuntu bootstrap VM, and the disposable check bed) is inlined here. This repo
-#  VENDORS NOTHING — every layer is an `@github.com/...` ref, and the shared
-#  build-config arrives via `import:`.
+#  VENDORS NOTHING — every layer is an `@github.com/...` ref into main's shared
+#  candy library, and the shared build-config (distro/builder/init vocabulary) is
+#  EMBEDDED in the `charly` binary (`charly/charly.cue`) — not imported.
 #
-#  import: has two shapes —
-#    * flat string  → build.yml (shared distro/builder/init vocabulary), merged
-#      into this repo's root namespace.
-#    * `alias: ref` → a child repo mounted under a namespace.
-#  Ubuntu roots on EXTERNAL bases entirely (the `ubuntu` base is docker.io
-#  `ubuntu:24.04`, the debootstrap builder is `base: debian:13`), so it has NO
-#  cross-repo entity refs — only the flat build.yml vocabulary import is needed.
+#  import: is EMPTY here (`import: []`). Ubuntu roots on EXTERNAL bases entirely
+#  (the `ubuntu` base is docker.io `ubuntu:24.04`, the debootstrap builder is
+#  `base: debian:13`), so it has NO cross-repo entity refs — and with the build
+#  vocabulary embedded in the binary, it imports NOTHING.
 #
-#  Ubuntu is deb-family: `distro.ubuntu` is `inherits: debian` in the shared
-#  build.yml (which carries BOTH the debian and ubuntu distro configs), so the
-#  inheritance resolves through the single remote build.yml import. Nothing in
-#  the main repo consumes any Ubuntu image, so there is NO main ↔ ubuntu
-#  coupling — the only edge is ubuntu → main (layers + build.yml).
+#  Ubuntu is deb-family: `distro.ubuntu` is `inherits: debian` in the EMBEDDED
+#  build vocabulary (`charly/charly.cue`, which carries BOTH the debian and ubuntu
+#  distro configs), so the inheritance resolves from the embedded vocab. Nothing
+#  in the main repo consumes any Ubuntu image, so there is NO main ↔ ubuntu
+#  coupling — the only edge is ubuntu → main's shared candy layers via `@github` refs.
 #
 #  Directly buildable: `charly box build ubuntu` (the build verb defaults to this
 #  charly.yml). From the parent repo: `charly -C box/ubuntu box build
@@ -126,7 +124,7 @@ ubuntu-debootstrap:
         # Bootstrap-from-scratch via debootstrap inside the ubuntu-debootstrap-
         # builder container, then booted under libvirt/QEMU. The debootstrap
         # builder template + distro.ubuntu config (which inherits debian) resolve
-        # from the imported build.yml.
+        # from the embedded build vocabulary (`charly/charly.cue`).
         source:
             kind: bootstrap
             builder: debootstrap

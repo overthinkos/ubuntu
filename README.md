@@ -14,16 +14,17 @@ of the main repo.
 
 ## Composition by reference — nothing is vendored
 
-This repo contains **no layers and no build-config of its own**. Everything is
-pulled from `github.com/overthinkos/overthink` by **github reference**:
+This repo contains **no candies of its own** and carries no build-config file.
+Everything is pulled from `github.com/overthinkos/overthink` by **github reference**,
+and the shared build vocabulary is embedded in the `charly` binary:
 
-- every layer in `box.yml` is an `@github.com/overthinkos/overthink/candy/<name>:<tag>` ref;
-- the shared build-config (`build.yml` — distro/builder/init) is a remote
-  `import:` in `charly.yml`. Ubuntu is deb-family: `distro.ubuntu` is
-  `inherits: debian`, and the single remote `build.yml` carries BOTH the
-  `ubuntu` and `debian` distro configs, so the inheritance resolves with no
-  extra include. It also carries the `deb` format template and the
-  `debootstrap` builder template.
+- every candy in `charly.yml` is an `@github.com/overthinkos/overthink/candy/<name>:<tag>` ref;
+- the distro/builder/init build vocabulary is **embedded in the `charly` binary**
+  (`charly/charly.cue`) — `import:` is empty (`import: []`). Ubuntu is deb-family:
+  `distro.ubuntu` is `inherits: debian`, and the embedded vocabulary carries BOTH
+  the `ubuntu` and `debian` distro configs, so the inheritance resolves with no
+  import. It also carries the `deb` format template and the `debootstrap` builder
+  template.
 
 The `ubuntu` base roots at the upstream docker.io `ubuntu:24.04` image directly
 (the `ubuntu-debootstrap-builder` is `base: debian:13`, since debootstrap is a
@@ -35,7 +36,7 @@ exactly one definition of every layer — no duplication.
 
 Nothing in the main `opencharly` repo consumes any Ubuntu image (no
 `base: ubuntu` image stays in main), so there is **no main ↔ ubuntu coupling**:
-the only edge is `ubuntu → main` (this repo pulls layers + `build.yml`). Main
+the only edge is `ubuntu → main` (this repo pulls candies via `@github` refs). Main
 pulls nothing back. The image DAG is acyclic
 (`ubuntu-coder → ubuntu → docker.io/ubuntu:24.04`;
 `ubuntu-debootstrap → ubuntu-debootstrap-builder → docker.io/debian:13`).
