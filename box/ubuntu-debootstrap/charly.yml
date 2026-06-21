@@ -1,5 +1,5 @@
 ubuntu-debootstrap:
-    box:
+    candy:
         # Layerless `from: builder:debootstrap` image (a bootstrap base) — needs a
         # dedicated version: the runtime requires one for a layerless image on an
         # external base, and the entity-version migrate backfills only base:-style

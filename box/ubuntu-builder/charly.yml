@@ -1,5 +1,5 @@
 ubuntu-builder:
-    box:
+    candy:
         base: ubuntu
         produce:
             - pixi

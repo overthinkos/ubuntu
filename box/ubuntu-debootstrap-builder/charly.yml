@@ -1,5 +1,5 @@
 ubuntu-debootstrap-builder:
-    box:
+    candy:
         base: debian:13
         build:
             - deb

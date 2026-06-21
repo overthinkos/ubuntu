@@ -1,5 +1,5 @@
 ubuntu-coder:
-    box:
+    candy:
         base: ubuntu
     ubuntu-coder-candy:
         candy:
