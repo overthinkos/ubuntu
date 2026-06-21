@@ -22,7 +22,7 @@
 #  Directly buildable: `charly box build ubuntu` (the build verb defaults to this
 #  charly.yml). From the parent repo: `charly -C box/ubuntu box build
 #  ubuntu`, or anywhere: `charly --repo overthinkos/ubuntu box build ubuntu`.
-version: 2026.172.0002
+version: 2026.172.0004
 defaults:
     platform:
         - linux/amd64
@@ -39,8 +39,8 @@ import: []
 # deploy.yml). disposable: true is the sole authorization for the unattended
 # destroy+rebuild driven by `charly check run check-ubuntu-debootstrap-vm`.
 check-ubuntu-debootstrap-vm:
-    bundle:
-        vm: ubuntu-debootstrap
+    vm:
+        from: ubuntu-debootstrap
         disposable: true
         lifecycle: dev
         description: Sole proof the charly toolchain installs as the opencharly .deb via localpkg on a from-scratch debootstrap Ubuntu 24.04 VM, with apt auto-resolving deps and the distro-cascade deterministically picking the ubuntu/noble tailscale repo (not debian/trixie). Boots the ubuntu-debootstrap VM under libvirt/QEMU (UEFI-insecure, q35, ext4, ssh 12229), overlays the charly candy via add_candy, then runs two guest command checks — dpkg -s opencharly/podman/libvirt-daemon-system/tailscale plus charly version (LOCALPKG-DEB-AUTORESOLVE-OK), and grep of tailscale.list for 'stable/ubuntu noble'.
@@ -97,8 +97,8 @@ check-ubuntu-debootstrap-vm:
 # (incl. the noble exclude_distros package divergences) run via `charly check
 # live`; this bed adds a host-side status assertion + a noble base-identity probe.
 check-ubuntu-coder-pod:
-    bundle:
-        box: ubuntu-coder
+    pod:
+        image: ubuntu-coder
         disposable: true
         lifecycle: dev
         description: R10 bed for the ubuntu-coder image — proves the Ubuntu developer pod (sshd + language runtimes + AI CLIs on the Ubuntu 24.04 noble base) builds and runs as one composed pod. Builds box:ubuntu-coder, deploys, runs the composed baked file/package/service/command checks + charly status --json, and exercises the noble exclude_distros package divergences.
