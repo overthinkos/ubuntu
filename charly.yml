@@ -51,7 +51,7 @@ check-ubuntu-debootstrap-vm:
         # the .deb — the charly candy supplies it via the tailscale apt repo (noble), so
         # it must ALSO be present after deploy.
         add_candy:
-            - '@github.com/overthinkos/overthink/candy/charly:v2026.170.1105'
+            - '@github.com/overthinkos/overthink/candy/charly:v2026.174.0425'
     check-ubuntu-debootstrap-vm-install_opts:
         install_opts:
             allow_repo_changes: true
