@@ -22,7 +22,7 @@
 #  Directly buildable: `charly box build ubuntu` (the build verb defaults to this
 #  charly.yml). From the parent repo: `charly -C box/ubuntu box build
 #  ubuntu`, or anywhere: `charly --repo overthinkos/ubuntu box build ubuntu`.
-version: 2026.174.0300
+version: 2026.174.0500
 defaults:
     platform:
         - linux/amd64
@@ -68,27 +68,31 @@ check-ubuntu-debootstrap-vm:
             echo LOCALPKG-DEB-AUTORESOLVE-OK
         id: localpkg-deb-autoresolve
         description: charly installed as the opencharly .deb via localpkg, mandatory deps auto-resolved by apt; tailscale supplied by the charly layer
-        command: |
-            dpkg -s opencharly >/dev/null 2>&1 &&
-            dpkg -s podman >/dev/null 2>&1 &&
-            dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
-            dpkg -s tailscale >/dev/null 2>&1 &&
-            command -v charly >/dev/null 2>&1 &&
-            charly version &&
-            echo LOCALPKG-DEB-AUTORESOLVE-OK
         stdout:
             - contains: LOCALPKG-DEB-AUTORESOLVE-OK
         exit_status: 0
         context:
             - runtime
+        plugin: command
+        plugin_input:
+            command: |
+                dpkg -s opencharly >/dev/null 2>&1 &&
+                dpkg -s podman >/dev/null 2>&1 &&
+                dpkg -s libvirt-daemon-system >/dev/null 2>&1 &&
+                dpkg -s tailscale >/dev/null 2>&1 &&
+                command -v charly >/dev/null 2>&1 &&
+                charly version &&
+                echo LOCALPKG-DEB-AUTORESOLVE-OK
     tailscale-repo-suite-ubuntu-noble:
         check: command=grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
         id: tailscale-repo-suite-ubuntu-noble
         description: distro-cascade resolves the ubuntu/noble tailscale apt repo (not debian/trixie) deterministically
-        command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
         exit_status: 0
         context:
             - runtime
+        plugin: command
+        plugin_input:
+            command: grep -h 'pkgs[.]tailscale[.]com/stable/ubuntu noble' /etc/apt/sources.list.d/tailscale.list
 # Disposable R10 pod bed for the ubuntu-coder image (kind:check, target:pod) —
 # the pod x ubuntu cross-cell the bootstrap-VM bed above does not cover. Mirrors
 # check-fedora-coder-pod on the deb substrate; ports auto-allocate on 127.0.0.1
@@ -105,20 +109,24 @@ check-ubuntu-coder-pod:
     status-shows-pod:
         check: command=charly status --json
         id: status-shows-pod
-        command: charly status --json
-        in_container: false
         stdout:
             - contains: '"kind": "pod"'
             - contains: check-ubuntu-coder-pod
         context:
             - runtime
+        plugin: command
+        plugin_input:
+            command: charly status --json
+            in_container: false
     noble-base-identity:
         check: the guest base is Ubuntu noble (not Debian)
         id: noble-base-identity
-        command: grep -q 'VERSION_CODENAME=noble' /etc/os-release
         exit_status: 0
         context:
             - runtime
+        plugin: command
+        plugin_input:
+            command: grep -q 'VERSION_CODENAME=noble' /etc/os-release
 ubuntu-debootstrap:
     vm:
         # Bootstrap-from-scratch via debootstrap inside the ubuntu-debootstrap-
